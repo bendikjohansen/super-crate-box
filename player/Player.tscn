@@ -1,0 +1,40 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://player/player.gd" type="Script" id=1]
+[ext_resource path="res://player/player.png" type="Texture" id=2]
+[ext_resource path="res://player/player_hitbox.gd" type="Script" id=3]
+[ext_resource path="res://weapons/firearm/pistol/Pistol.tscn" type="PackedScene" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 6, 12 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( -6, 12 )
+
+[node name="Player" type="KinematicBody2D"]
+scale = Vector2( 1.2, 1.2 )
+collision_layer = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+InitialWeapon = ExtResource( 4 )
+
+[node name="PhysicsCollisionShape" type="CollisionShape2D" parent="."]
+position = Vector2( -3, 0 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+
+[node name="Hitbox" type="Area2D" parent="." groups=["players"]]
+collision_layer = 2
+collision_mask = 60
+script = ExtResource( 3 )
+player_path = NodePath("..")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2( -3, 0 )
+shape = SubResource( 2 )
+
+[connection signal="area_entered" from="Hitbox" to="Hitbox" method="_on_Hitbox_area_entered"]

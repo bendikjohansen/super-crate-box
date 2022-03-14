@@ -1,0 +1,100 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://levels/blue/Blue.tscn" type="PackedScene" id=1]
+[ext_resource path="res://player/Player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://enemies/enemy_spawner/enemy_spawner.gd" type="Script" id=3]
+[ext_resource path="res://box/box_spawner/box_spawner.gd" type="Script" id=4]
+[ext_resource path="res://box/Box.tscn" type="PackedScene" id=5]
+[ext_resource path="res://enemies/SmallEnemy.tscn" type="PackedScene" id=6]
+[ext_resource path="res://score/score.gd" type="Script" id=7]
+[ext_resource path="res://weapons/disk_gun/DiskGun.tscn" type="PackedScene" id=8]
+[ext_resource path="res://weapons/weapon_server/weapon_server.gd" type="Script" id=9]
+[ext_resource path="res://weapons/firearm/machine_gun/MachineGun.tscn" type="PackedScene" id=10]
+[ext_resource path="res://enemies/BigEnemy.tscn" type="PackedScene" id=11]
+[ext_resource path="res://weapons/firearm/revolver/Revolver.tscn" type="PackedScene" id=12]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 36, 8 )
+
+[node name="Main" type="Node2D"]
+
+[node name="BlueWorld" parent="." instance=ExtResource( 1 )]
+collision_mask = 0
+
+[node name="Player" parent="." instance=ExtResource( 2 )]
+position = Vector2( 326, 298 )
+weapon_server_path = NodePath("../WeaponServer")
+
+[node name="BoxSpawner" type="Node2D" parent="."]
+script = ExtResource( 4 )
+spawnpoint_1 = NodePath("spawnpoint_1")
+spawnpoint_2 = NodePath("spawnpoint_2")
+spawnpoint_3 = NodePath("spawnpoint_3")
+spawnpoint_4 = NodePath("spawnpoint_4")
+spawnpoint_5 = NodePath("spawnpoint_5")
+spawnpoint_6 = NodePath("spawnpoint_6")
+Box = ExtResource( 5 )
+
+[node name="spawnpoint_1" type="Node2D" parent="BoxSpawner"]
+position = Vector2( 60, 204 )
+
+[node name="spawnpoint_2" type="Node2D" parent="BoxSpawner"]
+position = Vector2( 588, 204 )
+
+[node name="spawnpoint_3" type="Node2D" parent="BoxSpawner"]
+position = Vector2( 60, 396 )
+
+[node name="spawnpoint_4" type="Node2D" parent="BoxSpawner"]
+position = Vector2( 588, 396 )
+
+[node name="spawnpoint_5" type="Node2D" parent="BoxSpawner"]
+position = Vector2( 180, 108 )
+
+[node name="spawnpoint_6" type="Node2D" parent="BoxSpawner"]
+position = Vector2( 468, 108 )
+
+[node name="EnemySpawner" type="Node2D" parent="."]
+position = Vector2( 324, -8 )
+script = ExtResource( 3 )
+SmallEnemy = ExtResource( 6 )
+BigEnemy = ExtResource( 11 )
+
+[node name="GroupTimer" type="Timer" parent="EnemySpawner"]
+wait_time = 2.0
+autostart = true
+
+[node name="IndividualTimer" type="Timer" parent="EnemySpawner"]
+wait_time = 0.2
+
+[node name="End" type="Area2D" parent="." groups=["end"]]
+position = Vector2( 324, 472 )
+collision_layer = 32
+collision_mask = 0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="End"]
+shape = SubResource( 1 )
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="CenterContainer" type="CenterContainer" parent="HUD"]
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.1
+
+[node name="Score" type="Label" parent="HUD/CenterContainer"]
+modulate = Color( 0, 0, 0, 1 )
+margin_left = 320.0
+margin_right = 328.0
+margin_bottom = 14.0
+text = "0"
+script = ExtResource( 7 )
+
+[node name="WeaponServer" type="Node2D" parent="."]
+script = ExtResource( 9 )
+weapons = [ ExtResource( 10 ), ExtResource( 8 ), ExtResource( 12 ) ]
+
+[connection signal="timeout" from="EnemySpawner/GroupTimer" to="EnemySpawner" method="_on_GroupTimer_timeout"]
+[connection signal="timeout" from="EnemySpawner/IndividualTimer" to="EnemySpawner" method="_on_IndividualTimer_timeout"]
